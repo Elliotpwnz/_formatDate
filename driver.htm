@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="Generator" content="EditPlus®">
+  <meta name="Author" content="herb verbesey">
+  <script src="_formatDate.js" type="text/javascript"></script>
+  <title>format date driver</title>
+ </head>
+ <body>
+  <form method="post" action="">
+	format <input type="text" name="format">
+	<input type="button" value="test" onclick="show(this.form.format.value)">
+  </form>
+  <div id="msg"></div>
+  <script>
+  alert(_formatDate())
+  function show(format){
+	document.getElementById("msg").innerHTML = _formatDate(format)
+  }
+  </script>
+ </body>
+</html>
