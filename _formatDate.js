@@ -15,6 +15,10 @@ var _fullMonths = ["January","February","March","April","May","June","July","Aug
     // zero based
 var _daysOfWeek = new Array("Sun.","Mon.","Tue.","Wed.","Thu.","Fri.","Sat.");
 var _daysOfWeekFull = new Array("Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday");
+var _dayOfMonthFull = new Array("First","Second","Third","Fourth","Fifth","Sixth","Seventh","Eighth","Ninth","Tenth","Eleventh",
+                                 "Twelth","Thirteenth","Fourteenth","Fifteenth","Sixteenth","Seventeenth","Eighteenth","Nineteenth",
+                                 "Twentieth","Twenty-First","Twenty-Second","Twenty-Third","Twenty-Fourth","Twenty-Fifth","Twenty-Sixth",
+                                 "Twenty-Seventh","Twenty-Eighth","Twenty-Ninth", "Thirtieth", "Thirty-First");
 var _mspDay = 86400000 // milli seconds per day
 
 function _blankNull(txt){ 
@@ -115,6 +119,11 @@ _formatDate() may also be called with a single string parameter containing an ou
                continue
 
             case "D":
+               if (format.substr(j,4)=="DDDD"){
+                  result += _dayOfMonthFull[ar[2]-1]
+                  j=j+3
+                  continue
+               }
                if (format.substr(j,2)=="DD"){
                   result += _nn(ar[2])
                   j++
