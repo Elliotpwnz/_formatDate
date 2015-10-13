@@ -124,6 +124,11 @@ _formatDate() may also be called with a single string parameter containing an ou
                continue
 
             case "W":
+               if (format.substr(j,4)=="WWWW"){
+                  result += _daysOfWeekFull[new Date(ar[0],ar[1]-1,ar[2]).getDay()]
+                  j=j+3
+                  continue
+               }
                if (format.substr(j,3)=="WWW"){
                   result += _daysOfWeek[new Date(ar[0],ar[1]-1,ar[2]).getDay()]
                   j=j+2
