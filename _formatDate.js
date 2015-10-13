@@ -16,7 +16,7 @@ var _fullMonths = ["January","February","March","April","May","June","July","Aug
 var _daysOfWeek = new Array("Sun.","Mon.","Tue.","Wed.","Thu.","Fri.","Sat.");
 var _daysOfWeekFull = new Array("Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday");
 var _dayOfMonthFull = new Array("First","Second","Third","Fourth","Fifth","Sixth","Seventh","Eighth","Ninth","Tenth","Eleventh",
-                                 "Twelth","Thirteenth","Fourteenth","Fifteenth","Sixteenth","Seventeenth","Eighteenth","Nineteenth",
+                                 "Twelfth","Thirteenth","Fourteenth","Fifteenth","Sixteenth","Seventeenth","Eighteenth","Nineteenth",
                                  "Twentieth","Twenty-First","Twenty-Second","Twenty-Third","Twenty-Fourth","Twenty-Fifth","Twenty-Sixth",
                                  "Twenty-Seventh","Twenty-Eighth","Twenty-Ninth", "Thirtieth", "Thirty-First");
 var _mspDay = 86400000 // milli seconds per day
@@ -124,6 +124,23 @@ _formatDate() may also be called with a single string parameter containing an ou
                   j=j+3
                   continue
                }
+               if (format.substr(j,3)=="DDD"){
+                  result +=_nn(ar[2])
+                  if (_nn(ar[2]) == 1 || _nn(ar[2]) == 21 || _nn(ar[2]) == 31){
+                     result += "st"
+                  }
+                  else if (_nn(ar[2]) == 2 || _nn(ar[2]) == 22){
+                     result += "nd"
+                  }
+                  else if (_nn(ar[2]) == 3 || _nn(ar[2]) == 23){
+                     result += "rd"
+                  }
+                  else{
+                     result += "th"
+                  }
+                  j=j+2
+                  continue
+               }
                if (format.substr(j,2)=="DD"){
                   result += _nn(ar[2])
                   j++
@@ -167,6 +184,10 @@ _formatDate() may also be called with a single string parameter containing an ou
                   j=j+(format.substr(j+3,1)=="M"?3:2)
                   continue
                }
+
+            case "N":
+               result += _nn(ar[4])
+               continue
 
             default: result += format.substr(j,1)
             }
