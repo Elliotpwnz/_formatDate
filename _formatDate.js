@@ -96,6 +96,11 @@ _formatDate() may also be called with a single string parameter containing an ou
                continue
 
             case "M":
+               if (format.substr(j,4)=="MMMM"){
+                  result += _fullMonths[ar[1]-1]
+                  j = j+3
+                  continue
+               }
                if (format.substr(j,3)=="MMM"){
                   result += _months[ar[1]-1]
                   j = j+2
