@@ -166,28 +166,53 @@ _formatDate() may also be called with a single string parameter containing an ou
             case "H":
 
                // handle missing data
-
-               if (format.substr(j,5)=="HH:MM"){
-                  result +=  _nn(ar[3]) + ":" + _nn(ar[4])
-                  j=j+4
-                  continue
-               }
-               if (format.substr(j,4)=="HHMM"){
-                  result +=  _nn(ar[3]) + _nn(ar[4])
-                  j=j+4
-                  continue
-               }
-               if (format.substr(j,3)=="H:M"){
+               if (format.substr(j,3)=="HHH"){
                   var pm = ar[3] >= 12
                   if (pm) ar[3] = ar[3] - 12
-                  result +=  ar[3]+ ":" + _nn(ar[4]) + (pm?"pm":"am")
-                  j=j+(format.substr(j+3,1)=="M"?3:2)
+                  result +=  ar[3]+ (pm?"pm":"am")
+                  j=j+2
                   continue
                }
+               if (format.substr(j,2)=="HH"){
+                  result +=  _nn(ar[3])
+                  j=j+1
+                  continue
+               }
+               result += ar[3] //Single 'H'
+               continue
 
             case "N":
-               result += _nn(ar[4])
+               if (format.substr(j,3)=="NNN"){
+                  var pm = ar[3] >= 12
+                  if (pm) ar[3] = ar[3] - 12
+                  result += _nn(ar[4]) + (pm?"pm":"am")
+                  j=j+2
+                  continue
+               }
+               if (format.substr(j,2)=="NN"){
+                  result +=  _nn(ar[4])
+                  j = j+1
+                  continue
+               }
+               result += ar[4] //Single 'N'
                continue
+
+            case "S":
+               if (format.substr(j,3)=="SSS"){
+                  var pm = ar[3] >= 12
+                  if (pm) ar[3] = ar[3] - 12
+                  result += _nn(ar[5]) + (pm?"pm":"am")
+                  j=j+2
+                  continue
+               }
+               if (format.substr(j,2)=="SS"){
+                  result +=  _nn(ar[5])
+                  j = j+1
+                  continue
+               }
+               result += ar[5] // Single 'S'
+               continue
+
 
             default: result += format.substr(j,1)
             }
