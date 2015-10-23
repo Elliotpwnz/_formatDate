@@ -53,7 +53,7 @@ _formatDate() may also be called with a single string parameter containing an ou
       case "": case "STRING": return String(new Date(ar[0],ar[1]-1,ar[2],ar[3],ar[4],ar[5]))
       case "[]":              return ar
       case "DATEPICKER":      return _nn(ar[1])+"/"+_nn(ar[2])+"/"+ar[0]
-
+/*
       case "MMM D,YYYY": // day not required
          txt = _months[ar[1]-1]+" "
          if (ar[2]) txt += ar[2]+", "
@@ -76,7 +76,7 @@ _formatDate() may also be called with a single string parameter containing an ou
 
       case "YYMMDDHHMM":
          return String(ar[0]).slice(2) + _nn(ar[1]) + _nn(ar[2]) + _nn(ar[3]) + _nn(ar[4])
-
+*/
       case "SQL":             return "{ts '"+ar[0]+"-"+_nn(ar[1])+"-"+_nn(Math.max(1,ar[2]))+" "+_nn(ar[3])+":"+_nn(ar[4])+":"+_nn(ar[5])+"'}" 
             // odbc standard works for both Access and SQL Server
       
