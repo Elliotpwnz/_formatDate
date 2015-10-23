@@ -46,8 +46,8 @@ _formatDate() may also be called with a single string parameter containing an ou
    function applyFormat(ar,format){ // ----------------- O U T P U T   F O R M A T S
       if (!format || typeof format != 'string') return ar
       var txt = ''
-      format = format.toUpperCase()
-      switch (format) {
+      FORMAT = format.toUpperCase()
+      switch (FORMAT) {
       case "DATE":            return new Date(ar[0],ar[1]-1,ar[2],ar[3],ar[4],ar[5])
       case "#":               return new Date(ar[0],ar[1]-1,ar[2],ar[3],ar[4],ar[5]).getTime()
       case "": case "STRING": return String(new Date(ar[0],ar[1]-1,ar[2],ar[3],ar[4],ar[5]))
@@ -83,15 +83,16 @@ _formatDate() may also be called with a single string parameter containing an ou
       default:
          var n = format.length -1
          var result = ''
+		 var suffix = ''
          for (var j=0; j<=n ; j++ ){
-            switch (format.substr(j,1)){
+            switch (FORMAT.substr(j,1)){
             case "Y":
-               if (format.substr(j,4) == "YYYY"){ // YYYY
+               if (FORMAT.substr(j,4) == "YYYY"){ // YYYY
                   result += ar[0]
                   j=j+3
                   continue
                }
-               if (format.substr(j,2) == "YY"){ // YY
+               if (FORMAT.substr(j,2) == "YY"){ // YY
                   result += String(ar[0]).slice(2)
                   j++
                   continue
@@ -100,17 +101,17 @@ _formatDate() may also be called with a single string parameter containing an ou
                continue
 
             case "M":
-               if (format.substr(j,4)=="MMMM"){
+               if (FORMAT.substr(j,4)=="MMMM"){
                   result += _fullMonths[ar[1]-1]
                   j = j+3
                   continue
                }
-               if (format.substr(j,3)=="MMM"){
+               if (FORMAT.substr(j,3)=="MMM"){
                   result += _months[ar[1]-1]
                   j = j+2
                   continue
                }
-               if (format.substr(j,2)=="MM"){
+               if (FORMAT.substr(j,2)=="MM"){
                   result += _nn(ar[1])
                   j++
                   continue
@@ -119,12 +120,12 @@ _formatDate() may also be called with a single string parameter containing an ou
                continue
 
             case "D":
-               if (format.substr(j,4)=="DDDD"){
+               if (FORMAT.substr(j,4)=="DDDD"){
                   result += _dayOfMonthFull[ar[2]-1]
                   j=j+3
                   continue
                }
-               if (format.substr(j,3)=="DDD"){
+               if (FORMAT.substr(j,3)=="DDD"){
                   result +=_nn(ar[2])
                   if (_nn(ar[2]) == 1 || _nn(ar[2]) == 21 || _nn(ar[2]) == 31){
                      result += "st"
@@ -141,7 +142,7 @@ _formatDate() may also be called with a single string parameter containing an ou
                   j=j+2
                   continue
                }
-               if (format.substr(j,2)=="DD"){
+               if (FORMAT.substr(j,2)=="DD"){
                   result += _nn(ar[2])
                   j++
                   continue
@@ -150,12 +151,12 @@ _formatDate() may also be called with a single string parameter containing an ou
                continue
 
             case "W":
-               if (format.substr(j,4)=="WWWW"){
+               if (FORMAT.substr(j,4)=="WWWW"){
                   result += _daysOfWeekFull[new Date(ar[0],ar[1]-1,ar[2]).getDay()]
                   j=j+3
                   continue
                }
-               if (format.substr(j,3)=="WWW"){
+               if (FORMAT.substr(j,3)=="WWW"){
                   result += _daysOfWeek[new Date(ar[0],ar[1]-1,ar[2]).getDay()]
                   j=j+2
                   continue
@@ -166,30 +167,22 @@ _formatDate() may also be called with a single string parameter containing an ou
             case "H":
 
                // handle missing data
-               if (format.substr(j,3)=="HHH"){
-                  var pm = ar[3] >= 12
-                  if (pm) ar[3] = ar[3] - 12
-                  result +=  ar[3]+ (pm?"pm":"am")
-                  j=j+2
-                  continue
-               }
-               if (format.substr(j,2)=="HH"){
+               if (FORMAT.substr(j,2)=="HH"){
                   result +=  _nn(ar[3])
-                  j=j+1
+                  j=j+1  // j++
                   continue
                }
-               result += ar[3] //Single 'H'
+				//Single 'H' am/pm
+			   if (ar[3]>=12){
+				  suffix="pm"
+				  ar[3] = ar[3] - 12
+			   }
+			   else suffix = "am"
+               result += ar[3] 
                continue
 
             case "N":
-               if (format.substr(j,3)=="NNN"){
-                  var pm = ar[3] >= 12
-                  if (pm) ar[3] = ar[3] - 12
-                  result += _nn(ar[4]) + (pm?"pm":"am")
-                  j=j+2
-                  continue
-               }
-               if (format.substr(j,2)=="NN"){
+               if (FORMAT.substr(j,2)=="NN"){
                   result +=  _nn(ar[4])
                   j = j+1
                   continue
@@ -198,14 +191,7 @@ _formatDate() may also be called with a single string parameter containing an ou
                continue
 
             case "S":
-               if (format.substr(j,3)=="SSS"){
-                  var pm = ar[3] >= 12
-                  if (pm) ar[3] = ar[3] - 12
-                  result += _nn(ar[5]) + (pm?"pm":"am")
-                  j=j+2
-                  continue
-               }
-               if (format.substr(j,2)=="SS"){
+               if (FORMAT.substr(j,2)=="SS"){
                   result +=  _nn(ar[5])
                   j = j+1
                   continue
@@ -213,11 +199,14 @@ _formatDate() may also be called with a single string parameter containing an ou
                result += ar[5] // Single 'S'
                continue
 
+			case '"':
+				while (format.substr(++j,1)!='"') {	result += format.substr(j,1) }
+			    continue
 
-            default: result += format.substr(j,1)
+            default: result += FORMAT.substr(j,1)
             }
          }
-         return result
+         return result + suffix
       
          return errorFunction('<u><b>'+format+'</b></u> not implemented as an output format')
       }

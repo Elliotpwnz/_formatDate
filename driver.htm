@@ -9,14 +9,17 @@
  </head>
  <body>
   <form method="post" action="">
+	y,m,d,h,n,s <input type="text" name="input">
 	format <input type="text" name="format">
-	<input type="button" value="test" onclick="show(this.form.format.value)">
+	<input type="button" value="test" onclick="show(this.form)">
   </form>
   <div id="msg"></div>
   <script>
-  alert(_formatDate())
-  function show(format){
-	document.getElementById("msg").innerHTML = _formatDate(format)
+//  alert(_formatDate())
+  function show(form){
+	format = form.format.value
+	if (form.input.value) document.getElementById("msg").innerHTML = _formatDate(form.input.value,"[]",format)
+	else document.getElementById("msg").innerHTML = _formatDate(format)
   }
   </script>
  </body>
