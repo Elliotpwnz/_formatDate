@@ -37,7 +37,7 @@ For example _formatDate("20050203","YYYYMMDD","M/D/Y") would return 2/3/2005
 
 Acceptable input and output formats are described below.
 
-_formatDate() may also be called with a single string parameter containing an output format, in which case the current time/date is returned in the requested  format.
+_formatDate() may also be called with a single string parameter containing an output format, in which case the current date/time is returned in the requested format.
 */
    if (!errorFunction) errorFunction = function(msg){
       return "ERROR: " + msg +" in call to <i>_formatDate()</i>" 
@@ -53,37 +53,14 @@ _formatDate() may also be called with a single string parameter containing an ou
       case "": case "STRING": return String(new Date(ar[0],ar[1]-1,ar[2],ar[3],ar[4],ar[5]))
       case "[]":              return ar
       case "DATEPICKER":      return _nn(ar[1])+"/"+_nn(ar[2])+"/"+ar[0]
-/*
-      case "MMM D,YYYY": // day not required
-         txt = _months[ar[1]-1]+" "
-         if (ar[2]) txt += ar[2]+", "
-         return txt + ar[0]
-      case "WWW MMM D,YYYY H:MM":   txt += _daysOfWeek[new Date(ar[0],ar[1]-1,ar[2]).getDay()]+' ' // fall thru
-      case "MMM D,YYYY H:MM":
-         var pm = ar[3] >= 12
-         if (pm) ar[3] = ar[3] - 12
-         txt += _months[ar[1]-1]+" "+ar[2]+", "+ar[0]
-         if (!(ar[4] | ar[5])) return txt 
-         return  txt +" "+ar[3]+":"+_nn(ar[4]) + (pm? " pm" : " am")
-      case "H:MM": // am/pm
-         if (!(ar[3] | ar[4])) return '' 
-         var pm = ar[3] >= 12
-         if (pm) ar[3] = ar[3] - 12
-         return  ar[3]+":"+_nn(ar[4]) + (pm? " pm" : " am")
-
-      case "YYMMDD HH:MM":
-         return String(ar[0]).slice(2) + _nn(ar[1]) + _nn(ar[2]) + " " + _nn(ar[3]) + ":" + _nn(ar[4])
-
-      case "YYMMDDHHMM":
-         return String(ar[0]).slice(2) + _nn(ar[1]) + _nn(ar[2]) + _nn(ar[3]) + _nn(ar[4])
-*/
       case "SQL":             return "{ts '"+ar[0]+"-"+_nn(ar[1])+"-"+_nn(Math.max(1,ar[2]))+" "+_nn(ar[3])+":"+_nn(ar[4])+":"+_nn(ar[5])+"'}" 
             // odbc standard works for both Access and SQL Server
       
       default:
          var n = format.length -1
          var result = ''
-		 var suffix = ''
+         var suffix = ''
+         var convert_MtoN_rangeLimit = -1
          for (var j=0; j<=n ; j++ ){
             switch (FORMAT.substr(j,1)){
             case "Y":
@@ -101,6 +78,16 @@ _formatDate() may also be called with a single string parameter containing an ou
                continue
 
             case "M":
+               if (j <= convert_MtoN_rangeLimit) { // M should be interpreted as minutes, not months
+                  if (FORMAT.substr(j,2)=="MM"){ // 'MM' interpreted as 'NN'
+                     result += _nn(ar[4])
+                     j++
+                     continue
+                  }
+                  result += ar[4] //Single 'M' interpreted as a single 'N'
+                  continue
+
+               }
                if (FORMAT.substr(j,4)=="MMMM"){
                   result += _fullMonths[ar[1]-1]
                   j = j+3
@@ -120,6 +107,11 @@ _formatDate() may also be called with a single string parameter containing an ou
                continue
 
             case "D":
+               if (ar[2]==0) { // omit missing day and comma if any
+                  while (FORMAT.substr(j+1,1)=="D") j++
+                  if (FORMAT.substr(j+1,1)==",") j++
+                  continue
+               }
                if (FORMAT.substr(j,4)=="DDDD"){
                   result += _dayOfMonthFull[ar[2]-1]
                   j=j+3
@@ -127,17 +119,11 @@ _formatDate() may also be called with a single string parameter containing an ou
                }
                if (FORMAT.substr(j,3)=="DDD"){
                   result +=_nn(ar[2])
-                  if (_nn(ar[2]) == 1 || _nn(ar[2]) == 21 || _nn(ar[2]) == 31){
-                     result += "st"
-                  }
-                  else if (_nn(ar[2]) == 2 || _nn(ar[2]) == 22){
-                     result += "nd"
-                  }
-                  else if (_nn(ar[2]) == 3 || _nn(ar[2]) == 23){
-                     result += "rd"
-                  }
-                  else{
-                     result += "th"
+                  switch (ar[2] % 10) {
+                     case 1:  result += "st"; break;
+                     case 2:  result += "nd"; break;
+                     case 3:  result += "th"; break;
+                     default: result += "th"; break;
                   }
                   j=j+2
                   continue
@@ -166,19 +152,22 @@ _formatDate() may also be called with a single string parameter containing an ou
 
             case "H":
 
-               // handle missing data
                if (FORMAT.substr(j,2)=="HH"){
                   result +=  _nn(ar[3])
-                  j=j+1  // j++
+                  j++
+                  convert_MtoN_rangeLimit = j + 2
                   continue
                }
-				//Single 'H' am/pm
-			   if (ar[3]>=12){
-				  suffix="pm"
-				  ar[3] = ar[3] - 12
-			   }
-			   else suffix = "am"
-               result += ar[3] 
+               //Single 'H' am/pm
+               if (ar[3]>=12){
+                  suffix="pm"
+                  result += ar[3] - 12
+               }
+               else {
+                  suffix = "am"
+                  result += ar[3]
+               }
+               convert_MtoN_rangeLimit = j + 2
                continue
 
             case "N":
@@ -300,7 +289,7 @@ _formatDate() may also be called with a single string parameter containing an ou
          ar[0] = Number(x[0]);  ar[1] = Number(x[1]);  
          break
 
-      default: return errorFunction("55--unsupported input format: <u><b>"+inputFormat+'</b></u>')
+      default: return errorFunction("unsupported input format: <u><b>"+inputFormat+'</b></u>')
       }
    }
    return applyFormat(ar,outputFormat)
