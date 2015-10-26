@@ -9,14 +9,25 @@
  </head>
  <body>
   <form method="post" action="">
-	format <input type="text" name="format">
-	<input type="button" value="test" onclick="show(this.form.format.value)">
+  <table>
+  <tr><td>input date: y,m,d,h,n,s</td><td><input type="text" name="input"> leave blank for current date/time</td></tr>
+  <tr><td style="text-align:right">output format</td><td><input type="text" name="format" size="40"></td></tr>
+  </table>
+  <pre>examples:
+  mmm d, 'yy "at" n "minutes after" h
+  wwww "the" ddd "day of" mmmm yyyy
+  m/d/y
+  YYYYMMDDHHMMSS
+  SQL
+  <input type="button" value="test" onclick="show(this.form)">
   </form>
   <div id="msg"></div>
   <script>
-  alert(_formatDate())
-  function show(format){
-	document.getElementById("msg").innerHTML = _formatDate(format)
+//  alert(_formatDate())
+  function show(form){
+	format = form.format.value
+	if (form.input.value) document.getElementById("msg").innerHTML = _formatDate(form.input.value,"[]",format)
+	else document.getElementById("msg").innerHTML = _formatDate(format)
   }
   </script>
  </body>
