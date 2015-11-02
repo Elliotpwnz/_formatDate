@@ -31,7 +31,7 @@ The following input formats will use 10/23/2015 1:30pm as the example date.
 * RS - Accepts SQL result set
 
 ### ---Output Formats---
-The following output formats will user 5/25/2015 7:45am as the example date.
+The following output formats will use 1/25/2015 7:45am as the example date.
 
 Output formats work a little differently than input formats, and can be syntaxed 
 in a freeform manner. The following date options can be combined to create a 
@@ -40,13 +40,13 @@ customizable date format.
 ##### Years
 * YYYY - 2015
 * YY - 15
-* Y - 15 (single digit if first digit is 0)
+* Y - 2015
 
 ##### Months
-* MMMM - May
-* MMM - Oct.
-* MM - 05
-* M - 5
+* MMMM - January
+* MMM - Jan.
+* MM - 01
+* M - 1
 
 ##### Days
 * DDDD - Twenty-Fifth
@@ -60,29 +60,47 @@ customizable date format.
 * W - 1
 
 ##### Hours
-* HHH - 7am
 * HH - 07
-* H - 7
+* H - 7am (Note: Using this format will append your date with either 'am' or 'pm', and converts from military to standard)
 
 ##### Minutes
-* NNN - 45am
+Note: You can also use an 'M' in this scenario. All 'M's that take place after an 'H' are converted to 'N's.
+
 * NN - 45
 * N - 45 (single digit if first digit is 0)
 
 ##### Seconds
-* SSS - 23am
 * SS - 23
 * S - 23 (single digit if first digit is 0)
 
 We can also combine these date options to create unique formats.
 
-* MMM DDD - May 25th
-* H:NNN - 7:45am
-* H:MM:SSS - 7:45:23am
-* HHH - 7am
-* MMMM YYYY - May 2015
-* MMM DDD, YYYY - May 25, 2015
+* MMM DDD - Jan. 25th
+* H:N - 7:45am
+* H:MM:SS - 7:45:23am
+* H - 7am
+* MMMM YYYY - January 2015
+* MMM DDD, YYYY - Jan. 25, 2015
 
 You'll notice that you have free reign to use unreserved characters in your date format.
 Try experimenting with commas, parenthesis, hyphens, underlines, etc. to create your 
 own unique date formats!
+
+Note: You can use the quotation marks in your output format for additional customization.
+Everything within two quotation marks will not be converted at all.
+
+* WWWW "the" DDD "day of" MMMM YYYY - Monday the 13th day of September 2015
+
+### ---Bad Data---
+
+_formatDate also handles any 'bad data', and gives the user the ability to customize 
+the handling process. 'Bad data' refers to any undefined date elements in the input.
+
+For example, if I only included '2015' as an input, and then tried outputting a MMM YYYY, 
+the undefined MMM would be replaced with an asterisk. To customize this handling process, we
+can use the following syntax:
+
+?[]mmm ?[-]yyyy
+
+In the output format above, a missing month will be replaced with a blank, and the missing year
+will be replaced with a hyphen. 
